@@ -522,6 +522,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
                                                         tf2::Quaternion quat_end,
                                                         tf2::Vector3 origin_end,
                                                         double range_cutoff,
+                                                        bool preservative,
                                                         int channel_options)
   {
     //check if the user has requested the index field
@@ -533,7 +534,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     //ensure that we use the correct timestamps
     channel_options |= channel_option::Index;
 
-    projectLaser_(scan_in, cloud_out, range_cutoff, false, channel_options);
+    projectLaser_(scan_in, cloud_out, range_cutoff, preservative, channel_options);
 
     //we'll assume no associated viewpoint by default
     bool has_viewpoint = false;
@@ -675,6 +676,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
                                                          sensor_msgs::PointCloud2 &cloud_out,
                                                          tf::Transformer &tf,
                                                          double range_cutoff,
+                                                         bool preservative,
                                                          int channel_options)
   {
     ros::Time start_time = scan_in.header.stamp;
@@ -702,6 +704,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
                                     quat_start, origin_start,
                                     quat_end, origin_end,
                                     range_cutoff,
+                                    preservative,
                                     channel_options);
   }
 
@@ -738,6 +741,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
                                     quat_start, origin_start,
                                     quat_end, origin_end,
                                     range_cutoff,
+                                    false,
                                     channel_options);
   }
 
