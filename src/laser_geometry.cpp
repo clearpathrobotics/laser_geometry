@@ -46,10 +46,9 @@ namespace laser_geometry
     {
       if (preservative)
       {
-        ranges (0, index) = (double) (scan_in.ranges[index] == std::numeric_limits<float>::infinity()
+        ranges(0,index) = (double) (scan_in.ranges[index] == std::numeric_limits<float>::infinity()
                           ? scan_in.range_max : scan_in.ranges[index]);
-        ranges (1, index) = (double) (scan_in.ranges[index] == std::numeric_limits<float>::infinity()
-                          ? scan_in.range_max : scan_in.ranges[index]);
+        ranges(1,index) = ranges(0,index);
       }
       else
       {
@@ -117,7 +116,7 @@ namespace laser_geometry
     for (unsigned int index = 0; index< scan_in.ranges.size(); index++)
     {
       const float range = ranges(0, index);
-      if ((preservative && std::isfinite(ranges(0,index))) || ((range < range_cutoff) && (range >= scan_in.range_min))) //if valid or preservative
+      if ((preservative && std::isfinite(range)) || ((range < range_cutoff) && (range >= scan_in.range_min))) //if valid or preservative
       {
         cloud_out.points[count].x = output(0,index);
         cloud_out.points[count].y = output(1,index);
@@ -298,10 +297,9 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     {
       if (preservative)
       {
-        ranges (i, 0) = (double) (scan_in.ranges[i] == std::numeric_limits<float>::infinity()
+        ranges(i,0) = (double) (scan_in.ranges[i] == std::numeric_limits<float>::infinity()
                           ? scan_in.range_max : scan_in.ranges[i]);
-        ranges (i, 1) = (double) (scan_in.ranges[i] == std::numeric_limits<float>::infinity()
-                          ? scan_in.range_max : scan_in.ranges[i]);
+        ranges(i,1) = ranges(i,1);
       }
       else
       {

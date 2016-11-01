@@ -140,7 +140,6 @@ namespace laser_geometry
        * \param cloud_out The output point cloud
        * \param range_cutoff An additional range cutoff which can be
        *   applied to discard everything above it.
-       *   Defaults to -1.0, which means the laser scan max range.
        * \param preservative Whether to save point that are out of range 
        *   Inf range points will be converted to max_range.
        * \param channel_option An OR'd set of channels to include.
@@ -192,7 +191,6 @@ namespace laser_geometry
        * \param cloud_out The output point cloud
        * \param range_cutoff An additional range cutoff which can be
        *   applied to discard everything above it.
-       *   Defaults to -1.0, which means the laser scan max range.
        * \param preservative Whether to save point that are out of range 
        *   Inf range points will be converted to max_range.
        * \param channel_option An OR'd set of channels to include.
