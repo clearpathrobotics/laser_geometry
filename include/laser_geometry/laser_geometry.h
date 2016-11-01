@@ -130,6 +130,34 @@ namespace laser_geometry
         return projectLaser_ (scan_in, cloud_out, range_cutoff, false, channel_options);
       }
 
+      //! Project a sensor_msgs::LaserScan into a sensor_msgs::PointCloud
+      /*!
+       * Project a single laser scan from a linear array into a 3D
+       * point cloud.  The generated cloud will be in the same frame
+       * as the original laser scan.
+       *
+       * \param scan_in The input laser scan
+       * \param cloud_out The output point cloud
+       * \param range_cutoff An additional range cutoff which can be
+       *   applied to discard everything above it.
+       *   Defaults to -1.0, which means the laser scan max range.
+       * \param preservative Whether to save point that are out of range 
+       *   Inf range points will be converted to max_range.
+       * \param channel_option An OR'd set of channels to include.
+       *   Options include: channel_option::Default,
+       *   channel_option::Intensity, channel_option::Index,
+       *   channel_option::Distance, channel_option::Timestamp.
+       */
+      void projectLaser (const sensor_msgs::LaserScan& scan_in,
+                         sensor_msgs::PointCloud& cloud_out,
+                         double range_cutoff,
+                         bool preservative,
+                         int channel_options = channel_option::Default)
+      {
+        return projectLaser_ (scan_in, cloud_out, range_cutoff, preservative, channel_options);
+      }
+
+
       //! Project a sensor_msgs::LaserScan into a sensor_msgs::PointCloud2
       /*!
        * Project a single laser scan from a linear array into a 3D
@@ -151,8 +179,36 @@ namespace laser_geometry
                          double range_cutoff = -1.0,
                          int channel_options = channel_option::Default)
       {
-        projectLaser_(scan_in, cloud_out, range_cutoff, channel_options);
+        projectLaser_(scan_in, cloud_out, range_cutoff, false, channel_options);
       }
+
+      //! Project a sensor_msgs::LaserScan into a sensor_msgs::PointCloud2
+      /*!
+       * Project a single laser scan from a linear array into a 3D
+       * point cloud.  The generated cloud will be in the same frame
+       * as the original laser scan.
+       *
+       * \param scan_in The input laser scan
+       * \param cloud_out The output point cloud
+       * \param range_cutoff An additional range cutoff which can be
+       *   applied to discard everything above it.
+       *   Defaults to -1.0, which means the laser scan max range.
+       * \param preservative Whether to save point that are out of range 
+       *   Inf range points will be converted to max_range.
+       * \param channel_option An OR'd set of channels to include.
+       *   Options include: channel_option::Default,
+       *   channel_option::Intensity, channel_option::Index,
+       *   channel_option::Distance, channel_option::Timestamp.
+       */
+      void projectLaser (const sensor_msgs::LaserScan& scan_in,
+                         sensor_msgs::PointCloud2 &cloud_out,
+                         double range_cutoff,
+                         bool preservative,
+                         int channel_options = channel_option::Default)
+      {
+        projectLaser_(scan_in, cloud_out, range_cutoff, preservative, channel_options);
+      }
+
 
 
       //! Transform a sensor_msgs::LaserScan into a sensor_msgs::PointCloud in target frame
@@ -304,6 +360,7 @@ namespace laser_geometry
       void projectLaser_ (const sensor_msgs::LaserScan& scan_in,
                           sensor_msgs::PointCloud2 &cloud_out,
                           double range_cutoff,
+                          bool preservative,
                           int channel_options);
 
       //! Internal hidden representation of transformLaserScanToPointCloud

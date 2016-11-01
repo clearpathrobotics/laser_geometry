@@ -43,10 +43,20 @@ namespace laser_geometry
 
     // Fill the ranges matrix
     for (unsigned int index = 0; index < scan_in.ranges.size(); index++)
+    {
+      if (preservative)
+      {
+        ranges (0, index) = (double) (scan_in.ranges[index] == std::numeric_limits<float>::infinity()
+                          ? scan_in.range_max : scan_in.ranges[index]);
+        ranges (1, index) = (double) (scan_in.ranges[index] == std::numeric_limits<float>::infinity()
+                          ? scan_in.range_max : scan_in.ranges[index]);
+      }
+      else
       {
         ranges(0,index) = (double) scan_in.ranges[index];
         ranges(1,index) = (double) scan_in.ranges[index];
       }
+    }
 
     //Do the projection
     //    NEWMAT::Matrix output = NEWMAT::SP(ranges, getUnitVectors(scan_in.angle_min, scan_in.angle_max, scan_in.angle_increment));
@@ -107,7 +117,7 @@ namespace laser_geometry
     for (unsigned int index = 0; index< scan_in.ranges.size(); index++)
     {
       const float range = ranges(0, index);
-      if (preservative || ((range < range_cutoff) && (range >= scan_in.range_min))) //if valid or preservative
+      if ((preservative && std::isfinite(ranges(0,index))) || ((range < range_cutoff) && (range >= scan_in.range_min))) //if valid or preservative
       {
         cloud_out.points[count].x = output(0,index);
         cloud_out.points[count].y = output(1,index);
@@ -276,6 +286,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
   void LaserProjection::projectLaser_ (const sensor_msgs::LaserScan& scan_in,
                                       sensor_msgs::PointCloud2 &cloud_out,
                                       double range_cutoff,
+                                      bool preservative,
                                       int channel_options)
   {
     size_t n_pts = scan_in.ranges.size ();
@@ -285,8 +296,18 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     // Get the ranges into Eigen format
     for (size_t i = 0; i < n_pts; ++i)
     {
-      ranges (i, 0) = (double) scan_in.ranges[i];
-      ranges (i, 1) = (double) scan_in.ranges[i];
+      if (preservative)
+      {
+        ranges (i, 0) = (double) (scan_in.ranges[i] == std::numeric_limits<float>::infinity()
+                          ? scan_in.range_max : scan_in.ranges[i]);
+        ranges (i, 1) = (double) (scan_in.ranges[i] == std::numeric_limits<float>::infinity()
+                          ? scan_in.range_max : scan_in.ranges[i]);
+      }
+      else
+      {
+        ranges(i,0) = (double) scan_in.ranges[i];
+        ranges(i,1) = (double) scan_in.ranges[i];
+      }
     }
 
     // Check if our existing co_sine_map is valid
@@ -418,7 +439,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     {
       //check to see if we want to keep the point
       const float range = scan_in.ranges[i];
-      if (range < range_cutoff && range >= scan_in.range_min)
+      if ((preservative && std::isfinite(ranges(i,0))) || (range < range_cutoff && range >= scan_in.range_min))
       {
         float *pstep = (float*)&cloud_out.data[count * cloud_out.point_step];
 
@@ -512,7 +533,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     //ensure that we use the correct timestamps
     channel_options |= channel_option::Index;
 
-    projectLaser_(scan_in, cloud_out, range_cutoff, channel_options);
+    projectLaser_(scan_in, cloud_out, range_cutoff, false, channel_options);
 
     //we'll assume no associated viewpoint by default
     bool has_viewpoint = false;
