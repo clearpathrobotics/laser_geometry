@@ -299,7 +299,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
       {
         ranges(i,0) = (double) (scan_in.ranges[i] == std::numeric_limits<float>::infinity()
                           ? scan_in.range_max : scan_in.ranges[i]);
-        ranges(i,1) = ranges(i,1);
+        ranges(i,1) = ranges(i,0);
       }
       else
       {
