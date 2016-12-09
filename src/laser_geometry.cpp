@@ -41,13 +41,16 @@ namespace laser_geometry
   {
     boost::numeric::ublas::matrix<double> ranges(2, scan_in.ranges.size());
 
+    if (range_cutoff < 0)
+      range_cutoff = scan_in.range_max;
+
     // Fill the ranges matrix
     for (unsigned int index = 0; index < scan_in.ranges.size(); index++)
     {
       if (preservative)
       {
-        ranges(0,index) = (double) (scan_in.ranges[index] == std::numeric_limits<float>::infinity()
-                          ? scan_in.range_max : scan_in.ranges[index]);
+        ranges(0,index) = (double) (scan_in.ranges[index] > range_cutoff
+                          ? range_cutoff : scan_in.ranges[index]);
         ranges(1,index) = ranges(0,index);
       }
       else
@@ -108,9 +111,6 @@ namespace laser_geometry
       cloud_out.channels[chan_size].values.resize (scan_in.ranges.size());
       idx_timestamp = chan_size;
     }
-
-    if (range_cutoff < 0)
-      range_cutoff = scan_in.range_max;
 
     unsigned int count = 0;
     for (unsigned int index = 0; index< scan_in.ranges.size(); index++)
@@ -292,13 +292,16 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     Eigen::ArrayXXd ranges (n_pts, 2);
     Eigen::ArrayXXd output (n_pts, 2);
 
+    if (range_cutoff < 0)
+      range_cutoff = scan_in.range_max;
+
     // Get the ranges into Eigen format
     for (size_t i = 0; i < n_pts; ++i)
     {
       if (preservative)
       {
-        ranges(i,0) = (double) (scan_in.ranges[i] == std::numeric_limits<float>::infinity()
-                          ? scan_in.range_max : scan_in.ranges[i]);
+        ranges(i,0) = (double) (scan_in.ranges[i] > range_cutoff
+                          ? range_cutoff : scan_in.ranges[i]);
         ranges(i,1) = ranges(i,0);
       }
       else
@@ -428,9 +431,6 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     cloud_out.row_step   = cloud_out.point_step * cloud_out.width;
     cloud_out.data.resize (cloud_out.row_step   * cloud_out.height);
     cloud_out.is_dense = false;
-
-    if (range_cutoff < 0)
-      range_cutoff = scan_in.range_max;
 
     unsigned int count = 0;
     for (size_t i = 0; i < n_pts; ++i)
