@@ -437,7 +437,8 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     {
       //check to see if we want to keep the point
       const float range = scan_in.ranges[i];
-      if (std::isnan(range) || (preservative && std::isfinite(ranges(i,0))) || (range < range_cutoff && range >= scan_in.range_min))
+      if ((preservative && std::isnan(range)) || (preservative && std::isfinite(ranges(i,0))) ||
+          (range < range_cutoff && range >= scan_in.range_min))
       {
         float *pstep = (float*)&cloud_out.data[count * cloud_out.point_step];
 
