@@ -196,7 +196,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
 
   void
     LaserProjection::transformLaserScanToPointCloud_ (const std::string &target_frame, sensor_msgs::PointCloud &cloud_out, const sensor_msgs::LaserScan &scan_in,
-                                                     tf::Transformer& tf, double range_cutoff, int mask)
+                                                     tf::Transformer& tf, double range_cutoff, int mask, bool preservative)
   {
     cloud_out.header = scan_in.header;
 
@@ -214,7 +214,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
 
     pointIn.frame_id_ = scan_in.header.frame_id;
 
-    projectLaser_ (scan_in, cloud_out, range_cutoff, false, mask);
+    projectLaser_ (scan_in, cloud_out, range_cutoff, preservative, mask);
 
     cloud_out.header.frame_id = target_frame;
 
