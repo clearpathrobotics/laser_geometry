@@ -302,6 +302,8 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
       {
         ranges(i,0) = (double) (scan_in.ranges[i] > range_cutoff
                           ? range_cutoff : scan_in.ranges[i]);
+        ranges(i,0) = (double) (scan_in.ranges[i] < scan_in.range_min
+                          ? scan_in.range_min : scan_in.ranges[i]);
         ranges(i,1) = ranges(i,0);
       }
       else
@@ -437,7 +439,7 @@ const boost::numeric::ublas::matrix<double>& LaserProjection::getUnitVectors_(do
     {
       //check to see if we want to keep the point
       const float range = scan_in.ranges[i];
-      if ((preservative && std::isfinite(ranges(i,0))) || (range < range_cutoff && range >= scan_in.range_min))
+      if (preservative || (range < range_cutoff && range >= scan_in.range_min))
       {
         float *pstep = (float*)&cloud_out.data[count * cloud_out.point_step];
 
